@@ -1,2 +1,2 @@
-adk-docs https://github.com/google/adk-docs.git
-adk-samples https://github.com/google/adk-samples.git
+adk-docs https://github.com/tutumomo/adk-docs.git
+adk-samples https://github.com/tutumomo/adk-samples.git
