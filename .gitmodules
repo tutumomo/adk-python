@@ -1,0 +1,6 @@
+[submodule "adk-docs"]
+	path = adk-docs
+	url = https://github.com/tutumomo/adk-docs.git
+[submodule "adk-samples"]
+	path = adk-samples
+	url = https://github.com/tutumomo/adk-samples.git
