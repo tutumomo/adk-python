@@ -5,22 +5,58 @@ setlocal enabledelayedexpansion
 echo ========================================
 echo [選單] Git 操作選擇
 echo ========================================
-echo [1] 初始化 submodules
+echo [0] 全新裝機初始化（建議在新電腦上第一次操作用）
+echo [1] 初始化 submodules（含檢查是否已初始化）
 echo [2] 從上游 repo 更新（含 submodules）
 echo [3] 推送到 GitHub（含 submodules）
 echo [X] 離開
 echo ========================================
 set /p choice=請輸入選項編號：
 
+if /I "!choice!"=="0" goto fullinit
 if /I "!choice!"=="1" goto init
 if /I "!choice!"=="2" goto pull
 if /I "!choice!"=="3" goto push
 if /I "!choice!"=="X" goto end
 goto menu
 
+:fullinit
+set /p "repoURL=請輸入 GitHub repo URL（例如 https://github.com/你/adk-python.git）: "
+git clone --recurse-submodules !repoURL!
+cd adk-python
+git submodule update --init --recursive
+echo [INFO] 已 clone 並初始化 submodules
+
+git remote | findstr "upstream" > nul
+IF ERRORLEVEL 1 (
+    set /p upstreamURL=請輸入主專案的 upstream URL:
+    git remote add upstream !upstreamURL!
+)
+
+echo [INFO] 初始化完成，歡迎使用
+pause
+goto end
+
 :init
+set "needInit=1"
+
+if exist .gitmodules (
+    echo [INFO] 偵測到 .gitmodules 存在。
+    for /f %%i in ('findstr /i "\[submodule" .gitmodules') do (
+        set "needInit=0"
+    )
+)
+
+if "!needInit!"=="0" (
+    set /p redoInit=[INFO] 檢測到已有 submodules 記錄，是否重新初始化？(Y/N):
+    if /I "!redoInit!" NEQ "Y" (
+        echo [INFO] 已取消初始化 submodules。
+        goto menu
+    )
+)
+
 if exist submodules_config.txt (
-    echo [INFO] 偵測到 submodules_config.txt，開始加入 submodules...
+    echo [INFO] 開始依 submodules_config.txt 初始化 submodules...
     for /f "tokens=1,2,3 delims= " %%a in (submodules_config.txt) do (
         if not exist "%%a\\" (
             git submodule add %%b %%a
@@ -69,7 +105,6 @@ if exist submodules_config.txt (
 goto menu
 
 :push
-REM === 進入 push 前詢問 commit message（加時間戳）
 set "defaultMsg=更新"
 set /p "commitMsg=請輸入 commit 訊息（直接按 Enter 則使用預設："更新"）: "
 if "!commitMsg!"=="" (
