@@ -30,4 +30,8 @@ This project follows
 All submissions, including submissions by project members, require review. We
 use GitHub pull requests for this purpose. Consult
 [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
+<<<<<<< HEAD
 information on using pull requests.
+=======
+information on using pull requests.
+>>>>>>> b52c2ebb381f2769159af90e35ac975313f59fd4
